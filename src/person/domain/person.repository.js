@@ -7,11 +7,11 @@ export default class PersonRepository {
     throw new Error("Method 'getPersonById()' must be implemented.")
   }
 
-  insertPerson ({ name, lastname, age }) {
+  insertPerson ({ name, lastname, age, imageId }) {
     throw new Error("Method 'insertPerson()' must be implemented.")
   }
 
-  updatePersonById (personId, { name, lastname, age }) {
+  updatePersonById (personId, { name, lastname, age, imageId }) {
     throw new Error("Method 'updatePersonById()' must be implemented.")
   }
 

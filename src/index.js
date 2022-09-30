@@ -1,6 +1,6 @@
-import Person from './person/domain/person.model.js'
 import express from 'express'
 import morgan from 'morgan'
+import personRouter from './routes/person.routes.js'
 const app = express()
 
 app.set('PORT', process.env.PORT || 3000)
@@ -10,12 +10,12 @@ app.use(express.json())
 app.use(morgan('dev'))
 
 app.get('/', (request, response) => {
-  const person = new Person({ name: 'josue', lastname: 'medina', age: 12 })
-
-  response.json({
-    message: person.getPerson()
-  })
+  response.status(201).json({
+    message: 'Hello'
+  }).end()
 })
+
+app.use('/api/persons', personRouter)
 
 app.listen(app.get('PORT'), () => {
   console.log(`Server is running on port ${app.get('PORT')}`)
