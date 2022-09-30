@@ -1,4 +1,14 @@
+/**
+ * @class PersonRepository
+ */
+
 export default class PersonRepository {
+  constructor () {
+    if (this.constructor === PersonRepository) {
+      throw new Error("Abstract classes can't be instantiated.")
+    }
+  }
+
   getAllPersons () {
     throw new Error("Method 'getAllPersons()' must be implemented.")
   }

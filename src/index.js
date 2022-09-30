@@ -1,5 +1,7 @@
 import express from 'express'
 import morgan from 'morgan'
+import handleErrors from './middlewares/handle.errors.js'
+import notFound from './middlewares/not.found.js'
 import personRouter from './routes/person.routes.js'
 const app = express()
 
@@ -16,6 +18,8 @@ app.get('/', (request, response) => {
 })
 
 app.use('/api/persons', personRouter)
+app.use(handleErrors)
+app.use(notFound)
 
 app.listen(app.get('PORT'), () => {
   console.log(`Server is running on port ${app.get('PORT')}`)

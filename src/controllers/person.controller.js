@@ -4,8 +4,12 @@ import PersonPrismaRepository from '../person/infrastructure/prisma/person.prism
 const personUseCase = new PersonUseCase(new PersonPrismaRepository())
 
 export const getAllPersons = async (request, response) => {
-  const persons = await personUseCase.listAllPersons()
-  response.status(201).json({
-    persons
-  })
+  try {
+    const persons = await personUseCase.listAllPersons()
+    response.status(201).json({
+      persons
+    })
+  } catch (error) {
+    console.log(error)
+  }
 }
