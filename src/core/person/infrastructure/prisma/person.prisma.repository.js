@@ -28,7 +28,7 @@ export default class PersonPrismaRepository extends PersonRepository {
         name,
         lastname,
         age,
-        imageId
+        imageId: typeof imageId === 'undefined' ? '387e387e37gh9383h93' : imageId
       }
     })
     return personSaved

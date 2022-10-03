@@ -17,7 +17,7 @@ app.get('/', (request, response) => {
   }).end()
 })
 
-app.use('/api/persons', personRouter)
+app.use('/api/v1/persons', personRouter)
 app.use(handleErrors)
 app.use(notFound)
 
