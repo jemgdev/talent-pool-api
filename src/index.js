@@ -3,6 +3,8 @@ import morgan from 'morgan'
 import handleErrors from './middlewares/handle.errors.js'
 import notFound from './middlewares/not.found.js'
 import personRouter from './routes/person.routes.js'
+import imageRouter from './routes/image.routes.js'
+
 const app = express()
 
 app.set('PORT', process.env.PORT || 3000)
@@ -18,6 +20,8 @@ app.get('/', (request, response) => {
 })
 
 app.use('/api/v1/persons', personRouter)
+app.use('/api/v1/images', imageRouter)
+
 app.use(handleErrors)
 app.use(notFound)
 

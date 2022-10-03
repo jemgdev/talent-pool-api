@@ -3,7 +3,7 @@ import prisma from './prisma.connection.js'
 
 /**
  * @class PersonPrismaRepository
- * @extends {PersonRepository}
+ * @extends { PersonRepository }
  */
 
 export default class PersonPrismaRepository extends PersonRepository {
@@ -12,34 +12,23 @@ export default class PersonPrismaRepository extends PersonRepository {
     return persons
   }
 
-  async getPersonById (personId) {
-    const person = await prisma.person.findUnique({
-      where: {
-        personId
-      }
-    })
-    return person
-  }
-
-  async insertPerson ({ personId, name, lastname, age, imageId }) {
+  async insertPerson ({ personId, name, lastname, age }) {
     const personSaved = await prisma.person.create({
       data: {
         personId,
         name,
         lastname,
-        age,
-        imageId: typeof imageId === 'undefined' ? '387e387e37gh9383h93' : imageId
+        age
       }
     })
     return personSaved
   }
 
-  async updatePersonById (personId, { name, lastname, age, imageId }) {
+  async updatePersonById (personId, { name, lastname, age }) {
     const personUpdated = await prisma.person.update({
       data: {
         name,
         age,
-        imageId,
         lastname
       },
       where: {

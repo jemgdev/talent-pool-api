@@ -1,5 +1,6 @@
 const ERROR_HANDLERS = {
   Error: (response, error) => response.status(400).json({ message: error.message }).end(),
+  TypeError: (response, error) => response.status(400).json({ message: error.message }).end(),
   defaultError: response => response.status(500).end()
 }
 

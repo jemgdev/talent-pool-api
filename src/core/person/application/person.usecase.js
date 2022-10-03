@@ -17,8 +17,8 @@ export default class PersonUseCase {
     return person
   }
 
-  async savePerson ({ name, lastname, age, imageId }) {
-    const person = new Person({ name, lastname, age, imageId }).getPerson()
+  async savePerson ({ name, lastname, age }) {
+    const person = new Person({ name, lastname, age }).getPerson()
 
     const personSaved = await this.personRepository.insertPerson(person)
     return personSaved
