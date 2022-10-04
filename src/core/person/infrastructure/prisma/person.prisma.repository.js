@@ -12,6 +12,15 @@ export default class PersonPrismaRepository extends PersonRepository {
     return persons
   }
 
+  async getPersonById (personId) {
+    const person = await prisma.person.findUnique({
+      where: {
+        personId
+      }
+    })
+    return person
+  }
+
   async insertPerson ({ personId, name, lastname, age }) {
     const personSaved = await prisma.person.create({
       data: {

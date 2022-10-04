@@ -1,41 +1,48 @@
 import Image from '../domain/image.model.js'
-import errorHandler from '../../shared/error.handler.js'
 
 export default class ImageUseCase {
   imageRepository
   personRepository
 
   constructor (imageRepository, personRepository) {
-    imageRepository = this.imageRepository
-    personRepository = this.personRepository
+    this.imageRepository =imageRepository
+    this.personRepository = personRepository
   }
 
   async listAllImages () {
-    try {
-      const images = await this.imageRepository.getAllImages()
-      return images
-    } catch (error) {
-      errorHandler(Error)
-    }
+    const images = await this.imageRepository.getAllImages()
+    return images
   }
 
   async getUniqueImage (imageId) {
-    try {
-      const image = await this.imageRepository.getImageById(imageId)
-      return image
-    } catch (error) {
-      errorHandler(error)
+    const { url, personId, title, description } = await this.imageRepository.getImageById(imageId)
+    const { name, lastname, age } = await this.personRepository.getPersonById(personId)
+    
+    const imageDTO = { 
+      imageId,
+      person: {
+        personId,
+        name,
+        lastname,
+        age
+      },
+      url,
+      title,
+      description
     }
+
+    return imageDTO
   }
 
   async getImagesByPerson (personId) {
     const personFound = await this.personRepository.getPersonById(personId)
 
     if (!personFound) {
-      throw new Error('Person not found')
+      return { message: 'Person not found' }
     }
-
+    
     const images = await this.imageRepository.getImagesByPersonId(personId)
+
     return images
   }
 
@@ -43,7 +50,7 @@ export default class ImageUseCase {
     const personFound = await this.personRepository.getPersonById(personId)
 
     if (!personFound) {
-      throw new Error('Person not found')
+      return { message: 'Person not found' }
     }
 
     const newImage = new Image({ url, title, description }).getImage()

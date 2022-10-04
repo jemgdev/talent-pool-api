@@ -11,7 +11,6 @@ const imageSchema = new Schema({
   title: String,
   description: String
 }, {
-  _id: false,
   versionKey: false,
   timestamps: false
 })
