@@ -17,15 +17,25 @@ export default class PersonRepository {
     throw new Error("Method 'getPersonById()' must be implemented.")
   }
 
-  insertPerson ({ name, lastname, age }) {
+  getPersonByIdTypeAndIdNumber (idType, idNumber) {
+    throw new Error("Method 'getPersonByIdTypeAndIdNumber()' must be implemented.")
+  }
+
+  getPersonsGreaterOrEqualToAge (age) {
+    throw new Error("Method 'getPersonsGreaterOrEqualTo()' must be implemented.")
+  }
+
+  insertPerson ({ name, lastname, idType, idNumber, age, cityOfBirth }) {
     throw new Error("Method 'insertPerson()' must be implemented.")
   }
 
-  updatePersonById (personId, { name, lastname, age }) {
+  updatePersonById (personId, { name, lastname, idType, idNumber, age, cityOfBirth }) {
     throw new Error("Method 'updatePersonById()' must be implemented.")
   }
 
   deletePersonById (personId) {
     throw new Error("Method 'deletePersonById()' must be implemented.")
   }
+
+  getPersons
 }

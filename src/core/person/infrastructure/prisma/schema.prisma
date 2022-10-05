@@ -14,5 +14,8 @@ model Person {
   personId String @db.VarChar(255) @id 
   name String @db.VarChar(255)
   lastname String @db.VarChar(255)
+  idType String @db.VarChar(255)
+  idNumber Int @db.Int @unique
+  cityOfBirth String @db.VarChar(255)
   age Int @db.Int
 }

@@ -24,7 +24,6 @@ export default class ImageMongooseRespository extends ImageRepository {
     const image = await Image.find({
       personId
     })
-
     return image
   }
 
@@ -42,10 +41,19 @@ export default class ImageMongooseRespository extends ImageRepository {
   }
 
   async updateImageById (imageId, { url, title, description }) {
-    throw new Error("Method 'updateImageById()' must be implemented.")
+    const imageFound = await Image.findOneAndUpdate({ imageId }, {
+      url,
+      title,
+      description
+    }, {
+      new: true
+    })
+
+    return imageFound
   }
 
   async deleteImageById (imageId) {
-    throw new Error("Method 'deleteImageById()' must be implemented.")
+    const imageDeleted = await Image.findOneAndDelete({ imageId })
+    return imageDeleted
   }
 }

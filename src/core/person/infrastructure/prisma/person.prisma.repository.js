@@ -21,24 +21,52 @@ export default class PersonPrismaRepository extends PersonRepository {
     return person
   }
 
-  async insertPerson ({ personId, name, lastname, age }) {
+  async getPersonByIdTypeAndIdNumber (idType, idNumber) {
+    const personFound = await prisma.person.findMany({
+      where: {
+        idType,
+        idNumber
+      }
+    })
+    console.log(personFound)
+    return personFound
+  }
+
+  async getPersonsGreaterOrEqualToAge (age) {
+    const personsFound = await prisma.person.findMany({
+      where: {
+        age: {
+          gte: age
+        }
+      }
+    })
+    return personsFound
+  }
+
+  async insertPerson ({ personId, name, lastname, age, idType, idNumber, cityOfBirth }) {
     const personSaved = await prisma.person.create({
       data: {
         personId,
         name,
         lastname,
-        age
+        age,
+        idType,
+        idNumber,
+        cityOfBirth
       }
     })
     return personSaved
   }
 
-  async updatePersonById (personId, { name, lastname, age }) {
+  async updatePersonById (personId, { name, lastname, age, idType, idNumber, cityOfBirth }) {
     const personUpdated = await prisma.person.update({
       data: {
         name,
+        lastname,
         age,
-        lastname
+        idType,
+        idNumber,
+        cityOfBirth
       },
       where: {
         personId

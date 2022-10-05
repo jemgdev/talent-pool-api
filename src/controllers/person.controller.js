@@ -4,8 +4,10 @@ import PersonPrismaRepository from '../core/person/infrastructure/prisma/person.
 const personUseCase = new PersonUseCase(new PersonPrismaRepository())
 
 export const getAllPersons = async (request, response, next) => {
+  const { age } = request.body
+
   try {
-    const persons = await personUseCase.listAllPersons()
+    const persons = await personUseCase.listAllPersons(age)
     response.status(200).json({
       data: persons
     }).end()
@@ -27,15 +29,31 @@ export const getPersonById = async (request, response, next) => {
   }
 }
 
+export const getPersonByIdentification = async (request, response, next) => {
+  const { idType, idNumber } = request.body
+
+  try {
+    const person = await personUseCase.getPersonByIdentification(idType, idNumber)
+
+    response.status(200).json({
+      data: person
+    }).end()
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const createPerson = async (request, response, next) => {
-  const { name, lastname, age, imageId } = request.body
+  const { name, lastname, age, idType, idNumber, cityOfBirth } = request.body
 
   try {
     const newPerson = {
       name,
       lastname,
       age,
-      imageId
+      idType,
+      idNumber,
+      cityOfBirth
     }
 
     const personSaved = await personUseCase.savePerson(newPerson)
@@ -49,13 +67,16 @@ export const createPerson = async (request, response, next) => {
 }
 
 export const updatePerson = async (request, response, next) => {
-  const { name, lastname, age } = request.body
+  const { name, lastname, idType, idNumber, age, cityOfBirth } = request.body
   const { personId } = request.params
 
   try {
     const personUpdated = await personUseCase.updatePerson(personId, {
       name,
       lastname,
+      idType,
+      idNumber,
+      cityOfBirth,
       age
     })
 

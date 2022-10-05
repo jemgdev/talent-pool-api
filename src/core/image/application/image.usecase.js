@@ -5,7 +5,7 @@ export default class ImageUseCase {
   personRepository
 
   constructor (imageRepository, personRepository) {
-    this.imageRepository =imageRepository
+    this.imageRepository = imageRepository
     this.personRepository = personRepository
   }
 
@@ -15,16 +15,24 @@ export default class ImageUseCase {
   }
 
   async getUniqueImage (imageId) {
-    const { url, personId, title, description } = await this.imageRepository.getImageById(imageId)
-    const { name, lastname, age } = await this.personRepository.getPersonById(personId)
-    
-    const imageDTO = { 
+    const image = await this.imageRepository.getImageById(imageId)
+
+    if (!image) {
+      return { message: 'Image not found' }
+    }
+
+    const { personId, url, title, description } = image
+    const { name, lastname, idType, idNumber, age, cityOfBirth } = await this.personRepository.getPersonById(personId)
+
+    const imageDTO = {
       imageId,
       person: {
-        personId,
         name,
         lastname,
-        age
+        idType,
+        idNumber,
+        age,
+        cityOfBirth
       },
       url,
       title,
@@ -40,9 +48,8 @@ export default class ImageUseCase {
     if (!personFound) {
       return { message: 'Person not found' }
     }
-    
-    const images = await this.imageRepository.getImagesByPersonId(personId)
 
+    const images = await this.imageRepository.getImagesByPersonId(personId)
     return images
   }
 
@@ -59,11 +66,14 @@ export default class ImageUseCase {
     return image
   }
 
-  async updateImage (imageId, { url, title, description }) {
+  async updateImage (imageId, { title, description }) {
     const oldImage = this.imageRepository.getImageById(imageId)
 
+    if (!oldImage) {
+      return { message: 'Image not found' }
+    }
+
     const newImage = {
-      url: typeof url === 'undefined' ? oldImage.url : url,
       title: typeof title === 'undefined' ? oldImage.title : title,
       description: typeof description === 'undefined' ? oldImage.description : description
     }
@@ -74,6 +84,11 @@ export default class ImageUseCase {
 
   async deleteImage (imageId) {
     const imageDeleted = await this.imageRepository.deleteImageById(imageId)
+
+    if (!imageDeleted) {
+      return { message: 'Image not found' }
+    }
+
     return imageDeleted
   }
 }
