@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 import morgan from 'morgan'
 import handleErrors from './middlewares/handle.errors'
 import notFound from './middlewares/not.found'
@@ -14,7 +14,7 @@ app.use(express.json())
 app.use(morgan('dev'))
 app.use(express.static(path.join(__dirname, 'images')))
 
-app.get('/', (request, response) => {
+app.get('/', (request: Request, response: Response) => {
   response.status(201).json({
     message: 'Talent Pool API v.1'
   }).end()

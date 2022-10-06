@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
 import ImageUseCase from '../core/image/application/image.usecase'
-import ImageCloudinaryRepository from '../core/image/infrastructure/cloudinary/image.cloudinary.respository'
+import ImageAwsRepository from '../core/image/infrastructure/aws/image.aws.repository'
 import ImageMongooseRespository from '../core/image/infrastructure/mongoose/image.mongoose.repository'
 import PersonPrismaRepository from '../core/person/infrastructure/prisma/person.prisma.repository'
 
-const imageUseCase = new ImageUseCase(new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageCloudinaryRepository())
+const imageUseCase = new ImageUseCase(new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageAwsRepository())
 
 export const getAllImages = async (request: Request, response: Response, next: NextFunction) => {
   try {
@@ -58,8 +58,9 @@ export const uploadImage = async (request: Request, response: Response, next: Ne
   }
 
   try {
-    const imageUrl = await imageUseCase.uploadImageToCloud(file.path)
+    const imageUrl = await imageUseCase.uploadImageToCloud(file.path, file.filename)
     const imageSaved = await imageUseCase.uploadImageByPerson(personId, imageUrl, title, description)
+
     response.status(201).json({
       data: imageSaved
     })

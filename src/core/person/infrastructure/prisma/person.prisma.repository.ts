@@ -1,5 +1,5 @@
 import PersonRepository from '../../domain/person.repository'
-import prisma from '../../../../prisma.connection'
+import prisma from '../../../../connections/prisma.connection'
 
 export default class PersonPrismaRepository implements PersonRepository {
   async getAllPersons () {

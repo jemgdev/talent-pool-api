@@ -1,4 +1,4 @@
-import '../../../../mongoose.connect'
+import '../../../../connections/mongoose.connect'
 import ImageRepository from '../../domain/image.repository'
 import Image from './image'
 import IImage from '../../domain/image.interface'

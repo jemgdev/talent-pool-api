@@ -93,8 +93,8 @@ export default class ImageUseCase {
     return imageDeleted
   }
 
-  async uploadImageToCloud (path: string) {
-    const imageUrl = await this.uploaderRepository.uploadImage(path)
+  async uploadImageToCloud (path: string, fileName: string) {
+    const imageUrl = await this.uploaderRepository.uploadImage(path, fileName)
     return imageUrl
   }
 }
