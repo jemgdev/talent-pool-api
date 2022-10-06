@@ -1,7 +1,14 @@
 import { v4 as uuid } from 'uuid'
+import IImage from './image.interface'
 
-export default class Image {
-  constructor ({ personId, url, title, description }) {
+export default class Image implements IImage {
+  imageId: string
+  personId: string
+  url: string
+  title: string
+  description: string
+  
+  constructor (personId: string, url: string, title: string, description: string) {
     this.imageId = uuid()
     this.personId = personId
     this.url = url

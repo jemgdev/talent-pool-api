@@ -1,13 +1,14 @@
-import PersonUseCase from '../core/person/application/person.usecase.js'
-import PersonPrismaRepository from '../core/person/infrastructure/prisma/person.prisma.repository.js'
+import { Request, Response, NextFunction } from 'express'
+import PersonUseCase from '../core/person/application/person.usecase'
+import PersonPrismaRepository from '../core/person/infrastructure/prisma/person.prisma.repository'
 
 const personUseCase = new PersonUseCase(new PersonPrismaRepository())
 
-export const getAllPersons = async (request, response, next) => {
+export const getAllPersons = async (request: Request, response: Response, next: NextFunction) => {
   const { age } = request.body
 
   try {
-    const persons = await personUseCase.listAllPersons(age)
+    const persons = await personUseCase.listAllPersons(Number(age))
     response.status(200).json({
       data: persons
     }).end()
@@ -16,7 +17,7 @@ export const getAllPersons = async (request, response, next) => {
   }
 }
 
-export const getPersonById = async (request, response, next) => {
+export const getPersonById = async (request: Request, response: Response, next: NextFunction) => {
   const { personId } = request.params
 
   try {
@@ -29,7 +30,7 @@ export const getPersonById = async (request, response, next) => {
   }
 }
 
-export const getPersonByIdentification = async (request, response, next) => {
+export const getPersonByIdentification = async (request: Request, response: Response, next: NextFunction) => {
   const { idType, idNumber } = request.body
 
   try {
@@ -43,8 +44,23 @@ export const getPersonByIdentification = async (request, response, next) => {
   }
 }
 
-export const createPerson = async (request, response, next) => {
+export const createPerson = async (request: Request, response: Response, next: NextFunction) => {
   const { name, lastname, age, idType, idNumber, cityOfBirth } = request.body
+
+  try {
+    const personSaved = await personUseCase.savePerson(name, lastname, age, idType, idNumber, cityOfBirth)
+
+    response.status(201).json({
+      data: personSaved
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updatePerson = async (request: Request, response: Response, next: NextFunction) => {
+  const { name, lastname, idType, idNumber, age, cityOfBirth } = request.body
+  const { personId } = request.params
 
   try {
     const newPerson = {
@@ -56,29 +72,7 @@ export const createPerson = async (request, response, next) => {
       cityOfBirth
     }
 
-    const personSaved = await personUseCase.savePerson(newPerson)
-
-    response.status(201).json({
-      data: personSaved
-    })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const updatePerson = async (request, response, next) => {
-  const { name, lastname, idType, idNumber, age, cityOfBirth } = request.body
-  const { personId } = request.params
-
-  try {
-    const personUpdated = await personUseCase.updatePerson(personId, {
-      name,
-      lastname,
-      idType,
-      idNumber,
-      cityOfBirth,
-      age
-    })
+    const personUpdated = await personUseCase.updatePerson(personId, newPerson)
 
     response.status(200).json({
       data: personUpdated
@@ -88,7 +82,7 @@ export const updatePerson = async (request, response, next) => {
   }
 }
 
-export const deletePerson = async (request, response, next) => {
+export const deletePerson = async (request: Request, response: Response, next: NextFunction) => {
   const { personId } = request.params
 
   try {

@@ -1,14 +1,11 @@
 import express from 'express'
 import morgan from 'morgan'
-import handleErrors from './middlewares/handle.errors.js'
-import notFound from './middlewares/not.found.js'
-import personRouter from './routes/person.routes.js'
-import imageRouter from './routes/image.routes.js'
+import handleErrors from './middlewares/handle.errors'
+import notFound from './middlewares/not.found'
+import personRouter from './routes/person.routes'
+import imageRouter from './routes/image.routes'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 const app = express()
 
 app.set('PORT', process.env.PORT || 3000)

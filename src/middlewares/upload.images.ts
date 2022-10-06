@@ -1,10 +1,7 @@
-import multer from 'multer'
+import { Request } from 'express'
+import multer, { FileFilterCallback } from 'multer'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { v4 as uuid } from 'uuid'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 const storage = multer.diskStorage({
   destination: (request, file, cb) => {
@@ -12,12 +9,11 @@ const storage = multer.diskStorage({
   },
   filename: (request, file, cb) => {
     const ext = file.originalname.split('.')[1]
-    console.log(ext)
     cb(null, `${uuid()}.${ext}`)
   }
 })
 
-const fileFilter = (request, file, cb) => {
+const fileFilter = (request: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
     cb(null, true)
   } else {
