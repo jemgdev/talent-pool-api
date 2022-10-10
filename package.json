@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo Nada por ahora 😥",
     "build": "tsc",
-    "start": "tsc && node build/index.js",
-    "dev": "ts-node-dev src/index.ts",
+    "start": "NODE_ENV=dev tsc && node build/index.js",
+    "start:test": "NODE_ENV=dev tsc && node build/index.js",
+    "dev": "NODE_ENV=dev ts-node-dev src/index.ts",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "NODE_ENV=test jest --verbose --detectOpenHandles tests/*",
+    "test:watch": "npm run test -- --watch --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
@@ -29,10 +31,12 @@
   "devDependencies": {
     "@prisma/client": "4.4.0",
     "@types/express": "4.17.13",
+    "@types/jest": "29.1.2",
     "@types/mongoose": "5.11.97",
     "@types/morgan": "1.9.3",
     "@types/multer": "1.4.7",
     "@types/node": "17.0.23",
+    "@types/supertest": "2.0.12",
     "@types/uuid": "8.3.4",
     "@typescript-eslint/eslint-plugin": "5.18.0",
     "@typescript-eslint/parser": "5.18.0",
@@ -41,10 +45,13 @@
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-n": "^15.3.0",
     "eslint-plugin-promise": "6.0.1",
+    "jest": "29.1.2",
+    "supertest": "6.3.0",
+    "ts-jest": "29.0.3",
     "ts-node-dev": "1.1.8",
     "typescript": "4.6.3"
   },
   "prisma": {
-    "schema": "src/schema.prisma"
+    "schema": "src/connections/schema.prisma"
   }
 }

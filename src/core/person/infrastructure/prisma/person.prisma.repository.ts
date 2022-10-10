@@ -77,4 +77,13 @@ export default class PersonPrismaRepository implements PersonRepository {
     })
     return personDeleted
   }
+
+  async deletePersonByIdNumber (idNumber: number) {
+    const personDeleted = await prisma.person.delete({
+      where: {
+        idNumber
+      }
+    })
+    return personDeleted
+  }
 }

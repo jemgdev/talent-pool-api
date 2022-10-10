@@ -10,6 +10,8 @@ export const getAllPersons = async (request: Request, response: Response, next: 
   try {
     const persons = await personUseCase.listAllPersons(Number(age))
     response.status(200).json({
+      status: 'OK',
+      message: 'All persons are found',
       data: persons
     }).end()
   } catch (error) {
@@ -86,7 +88,21 @@ export const deletePerson = async (request: Request, response: Response, next: N
   const { personId } = request.params
 
   try {
-    const personDeleted = await personUseCase.deletePerson(personId)
+    const personDeleted = await personUseCase.deletePersonById(personId)
+
+    response.status(200).json({
+      data: personDeleted
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const deletePersonByIdNumber = async (request: Request, response: Response, next: NextFunction) => {
+  const { idNumber } = request.body
+
+  try {
+    const personDeleted = await personUseCase.deletePersonByIdNumber(Number(idNumber))
 
     response.status(200).json({
       data: personDeleted

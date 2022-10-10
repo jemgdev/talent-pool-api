@@ -26,6 +26,12 @@ app.use('/api/v1/images', imageRouter)
 app.use(handleErrors)
 app.use(notFound)
 
-app.listen(app.get('PORT'), () => {
+const server = app.listen(app.get('PORT'), () => {
   console.log(`Server is running on port ${app.get('PORT')}`)
 })
+
+export default {
+  server,
+  app
+}
+

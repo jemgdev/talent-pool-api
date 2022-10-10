@@ -1,5 +1,5 @@
 import UploaderRepository from '../../domain/uploader.repository'
-import cloudinary from '../../../../sdk/cloudinary.sdk'
+import cloudinary from '../../../../sdks/cloudinary.sdk'
 import fs from 'node:fs/promises'
 
 export default class ImageCloudinaryRepository implements UploaderRepository {

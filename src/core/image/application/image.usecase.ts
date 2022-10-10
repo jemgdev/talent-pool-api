@@ -2,6 +2,7 @@ import Image from '../domain/image.model'
 import ImageRepository from '../domain/image.repository'
 import PersonRepository from '../../person/domain/person.repository'
 import UploaderRepository from '../domain/uploader.repository'
+import CustomError from '../../shared/custom.error'
 
 export default class ImageUseCase {
   private readonly imageRepository: ImageRepository
@@ -23,14 +24,14 @@ export default class ImageUseCase {
     const image = await this.imageRepository.getImageById(imageId)
 
     if (!image) {
-      return { message: 'Image not found' }
+      throw new CustomError ('TALENT_POOL_API_IMAGE', 'Image not found', 'Image not found')
     }
 
     const { personId, url, title, description } = image
     const person = await this.personRepository.getPersonById(personId)
 
     if (!person) {
-      return { message: 'Person not found' }
+      throw new CustomError ('TALENT_POOL_API_PERSON', 'Person not found', 'Person not found')
     }
 
     const imageDTO = {
@@ -48,7 +49,7 @@ export default class ImageUseCase {
     const personFound = await this.personRepository.getPersonById(personId)
 
     if (!personFound) {
-      return { message: 'Person not found' }
+      throw new CustomError ('TALENT_POOL_API_PERSON', 'Person not found', 'Person not found')
     }
 
     const images = await this.imageRepository.getImagesByPersonId(personId)
@@ -59,7 +60,7 @@ export default class ImageUseCase {
     const personFound = await this.personRepository.getPersonById(personId)
 
     if (!personFound) {
-      return { message: 'Person not found' }
+      throw new CustomError ('TALENT_POOL_API_PERSON', 'Person not found', 'Person not found')
     }
 
     const image = new Image(personId, url, title, description)
@@ -71,7 +72,7 @@ export default class ImageUseCase {
     const oldImage = await this.imageRepository.getImageById(imageId)
 
     if (!oldImage) {
-      return { message: 'Image not found' }
+      throw new CustomError ('TALENT_POOL_API_IMAGE', 'Image not found', 'Image not found')
     }
 
     const newImage = {
@@ -87,7 +88,7 @@ export default class ImageUseCase {
     const imageDeleted = await this.imageRepository.deleteImageById(imageId)
 
     if (!imageDeleted) {
-      return { message: 'Image not found' }
+      throw new CustomError ('TALENT_POOL_API_IMAGE', 'Image not found', 'Image not found')
     }
 
     return imageDeleted

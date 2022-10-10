@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
 import fsNonPromise from 'node:fs'
 import UploaderRepository from '../../domain/uploader.repository'
-import storage from '../../../../sdk/aws.sdk'
+import storage from '../../../../sdks/aws.sdk'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
 
 export default class ImageAwsRepository implements UploaderRepository {

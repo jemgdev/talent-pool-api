@@ -8,4 +8,5 @@ export default interface PersonRepository {
   insertPerson: ({ name, lastname, idType, idNumber, age, cityOfBirth, personId }: IPerson) => Promise<IPerson | null>
   updatePersonById: (personId: string, person: { name: string, lastname: string, idType: string, idNumber: number, cityOfBirth: string, age: number }) => Promise<IPerson | null>
   deletePersonById: (personId: string) => Promise<IPerson | null>
+  deletePersonByIdNumber: (idNumber: number) => Promise<IPerson | null>
 }
