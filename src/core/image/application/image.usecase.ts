@@ -3,6 +3,8 @@ import ImageRepository from '../domain/image.repository'
 import PersonRepository from '../../person/domain/person.repository'
 import UploaderRepository from '../domain/uploader.repository'
 import CustomError from '../../shared/custom.error'
+import IImage from '../domain/image.interface'
+import ImageDTO from '../domain/image.dto'
 
 export default class ImageUseCase {
   private readonly imageRepository: ImageRepository
@@ -15,26 +17,26 @@ export default class ImageUseCase {
     this.uploaderRepository = uploaderRepository
   }
 
-  async listAllImages () {
+  async listAllImages (): Promise<IImage[] | null> {
     const images = await this.imageRepository.getAllImages()
     return images
   }
 
-  async getUniqueImage (imageId) {
+  async getUniqueImage (imageId: string): Promise<ImageDTO | null> {
     const image = await this.imageRepository.getImageById(imageId)
 
     if (!image) {
-      throw new CustomError ('TALENT_POOL_API_IMAGE', 'Image not found', 'Image not found')
+      throw new CustomError ('IMAGE_404', 'Image', 'Image not found')
     }
 
     const { personId, url, title, description } = image
     const person = await this.personRepository.getPersonById(personId)
 
     if (!person) {
-      throw new CustomError ('TALENT_POOL_API_PERSON', 'Person not found', 'Person not found')
+      throw new CustomError ('PERSON_404', 'Person', 'Person not found')
     }
 
-    const imageDTO = {
+    const imageDTO: ImageDTO = {
       imageId,
       person,
       url,
@@ -45,34 +47,35 @@ export default class ImageUseCase {
     return imageDTO
   }
 
-  async getImagesByPerson (personId) {
+  async getImagesByPerson (personId: string): Promise<IImage[] | null> {
     const personFound = await this.personRepository.getPersonById(personId)
 
     if (!personFound) {
-      throw new CustomError ('TALENT_POOL_API_PERSON', 'Person not found', 'Person not found')
+      throw new CustomError ('PERSON_404', 'Person', 'Person not found')
     }
 
     const images = await this.imageRepository.getImagesByPersonId(personId)
     return images
   }
 
-  async uploadImageByPerson (personId, url, title, description) {
+  async uploadImageByPerson (path: string, fileName: string, personId: string, title: string, description: string, isUnlinkeable?: boolean): Promise<IImage | null| void> {
     const personFound = await this.personRepository.getPersonById(personId)
 
     if (!personFound) {
-      throw new CustomError ('TALENT_POOL_API_PERSON', 'Person not found', 'Person not found')
+      throw new CustomError ('PERSON_404', 'Person', 'Person not found')
     }
-
-    const image = new Image(personId, url, title, description)
+    
+    const imageUrl = await this.uploaderRepository.uploadImage(path, fileName, isUnlinkeable)
+    const image = new Image(personId, imageUrl, title, description)
     const imageUploaded = await this.imageRepository.saveImageByPersonId(personId, image.imageId, image.url, image.title, image.description)
-    return imageUploaded
+    return imageUploaded    
   }
 
-  async updateImage (imageId: string, title: string, description: string) {
+  async updateImage (imageId: string, title: string, description: string): Promise<IImage | null> {
     const oldImage = await this.imageRepository.getImageById(imageId)
 
     if (!oldImage) {
-      throw new CustomError ('TALENT_POOL_API_IMAGE', 'Image not found', 'Image not found')
+      throw new CustomError ('IMAGE_404', 'Image', 'Image not found')
     }
 
     const newImage = {
@@ -84,17 +87,17 @@ export default class ImageUseCase {
     return imageUpdated
   }
 
-  async deleteImage (imageId: string) {
+  async deleteImage (imageId: string): Promise<IImage | null> {
     const imageDeleted = await this.imageRepository.deleteImageById(imageId)
 
     if (!imageDeleted) {
-      throw new CustomError ('TALENT_POOL_API_IMAGE', 'Image not found', 'Image not found')
+      throw new CustomError ('IMAGE_404', 'Image', 'Image not found')
     }
 
     return imageDeleted
   }
 
-  async uploadImageToCloud (path: string, fileName: string) {
+  async uploadImageToCloud (path: string, fileName: string): Promise<string> {
     const imageUrl = await this.uploaderRepository.uploadImage(path, fileName)
     return imageUrl
   }

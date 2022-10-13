@@ -10,8 +10,8 @@
     "dev": "NODE_ENV=dev ts-node-dev src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "NODE_ENV=test jest --verbose --detectOpenHandles tests/*",
-    "test:watch": "npm run test -- --watch --detectOpenHandles"
+    "test": "NODE_ENV=test jest --verbose tests/image.test.ts",
+    "test:watch": "npm run test -- --watch"
   },
   "keywords": [],
   "author": "",

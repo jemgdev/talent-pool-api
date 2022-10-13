@@ -4,14 +4,14 @@ import PersonPrismaRepository from '../core/person/infrastructure/prisma/person.
 
 const personUseCase = new PersonUseCase(new PersonPrismaRepository())
 
-export const getAllPersons = async (request: Request, response: Response, next: NextFunction) => {
+export const getAllPersons = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   const { age } = request.body
 
   try {
     const persons = await personUseCase.listAllPersons(Number(age))
     response.status(200).json({
       status: 'OK',
-      message: 'All persons are found',
+      message: 'All persons were found',
       data: persons
     }).end()
   } catch (error) {
@@ -19,12 +19,14 @@ export const getAllPersons = async (request: Request, response: Response, next: 
   }
 }
 
-export const getPersonById = async (request: Request, response: Response, next: NextFunction) => {
+export const getPersonById = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   const { personId } = request.params
 
   try {
     const person = await personUseCase.getUniquePerson(personId)
     response.status(200).json({
+      status: 'OK',
+      message: 'The person was found',
       data: person
     }).end()
   } catch (error) {
@@ -32,13 +34,15 @@ export const getPersonById = async (request: Request, response: Response, next: 
   }
 }
 
-export const getPersonByIdentification = async (request: Request, response: Response, next: NextFunction) => {
+export const getPersonByIdentification = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   const { idType, idNumber } = request.body
 
   try {
     const person = await personUseCase.getPersonByIdentification(idType, idNumber)
 
     response.status(200).json({
+      status: 'OK',
+      message: 'The person was found',
       data: person
     }).end()
   } catch (error) {
@@ -46,13 +50,15 @@ export const getPersonByIdentification = async (request: Request, response: Resp
   }
 }
 
-export const createPerson = async (request: Request, response: Response, next: NextFunction) => {
+export const createPerson = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   const { name, lastname, age, idType, idNumber, cityOfBirth } = request.body
 
   try {
     const personSaved = await personUseCase.savePerson(name, lastname, age, idType, idNumber, cityOfBirth)
 
     response.status(201).json({
+      status: 'OK',
+      message: 'The person was created',
       data: personSaved
     })
   } catch (error) {
@@ -60,7 +66,7 @@ export const createPerson = async (request: Request, response: Response, next: N
   }
 }
 
-export const updatePerson = async (request: Request, response: Response, next: NextFunction) => {
+export const updatePerson = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   const { name, lastname, idType, idNumber, age, cityOfBirth } = request.body
   const { personId } = request.params
 
@@ -77,6 +83,8 @@ export const updatePerson = async (request: Request, response: Response, next: N
     const personUpdated = await personUseCase.updatePerson(personId, newPerson)
 
     response.status(200).json({
+      status: 'OK',
+      message: 'The person was updated',
       data: personUpdated
     })
   } catch (error) {
@@ -84,13 +92,15 @@ export const updatePerson = async (request: Request, response: Response, next: N
   }
 }
 
-export const deletePerson = async (request: Request, response: Response, next: NextFunction) => {
+export const deletePerson = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   const { personId } = request.params
 
   try {
     const personDeleted = await personUseCase.deletePersonById(personId)
 
     response.status(200).json({
+      status: 'OK',
+      message: 'The person was deleted',
       data: personDeleted
     })
   } catch (error) {
@@ -105,6 +115,8 @@ export const deletePersonByIdNumber = async (request: Request, response: Respons
     const personDeleted = await personUseCase.deletePersonByIdNumber(Number(idNumber))
 
     response.status(200).json({
+      status: 'OK',
+      message: 'The person was deleted',
       data: personDeleted
     })
   } catch (error) {
