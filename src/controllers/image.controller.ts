@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
 import ImageUseCase from '../core/image/application/image.usecase'
+import ImageAwsRepository from '../core/image/infrastructure/aws/image.aws.repository'
 import ImageCloudinaryRepository from '../core/image/infrastructure/cloudinary/image.cloudinary.respository'
 import ImageMongooseRespository from '../core/image/infrastructure/mongoose/image.mongoose.repository'
+import ImageUuidRepository from '../core/image/infrastructure/uuid/image.uuid.repository'
 import PersonPrismaRepository from '../core/person/infrastructure/prisma/person.prisma.repository'
 
-const imageUseCase = new ImageUseCase(new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageCloudinaryRepository())
+const imageUseCase = new ImageUseCase(new ImageUuidRepository() ,new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageAwsRepository())
 
 export const getAllImages = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   try {

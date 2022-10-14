@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
 import PersonUseCase from '../core/person/application/person.usecase'
 import PersonPrismaRepository from '../core/person/infrastructure/prisma/person.prisma.repository'
+import PersonUuidRepository from '../core/person/infrastructure/uuid/person.uuid.repository'
 
-const personUseCase = new PersonUseCase(new PersonPrismaRepository())
+const personUseCase = new PersonUseCase(new PersonUuidRepository(), new PersonPrismaRepository())
 
 export const getAllPersons = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   const { age } = request.body

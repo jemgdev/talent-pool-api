@@ -1,15 +1,14 @@
-import { v4 as uuid } from 'uuid'
-import IImage from './image.interface'
+import ImageIdGeneratorRepository from './image.id.generator.repository'
 
-export default class Image implements IImage {
+export default class Image {
   imageId: string
   personId: string
   url: string
   title: string
   description: string
   
-  constructor (personId: string, url: string, title: string, description: string) {
-    this.imageId = uuid()
+  constructor (imageIdGeneratorRepository: ImageIdGeneratorRepository ,personId: string, url: string, title: string, description: string) {
+    this.imageId = imageIdGeneratorRepository.generateImageId()
     this.personId = personId
     this.url = url
     this.title = title

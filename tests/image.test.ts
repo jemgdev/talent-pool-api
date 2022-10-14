@@ -1,8 +1,8 @@
 import supertest from 'supertest'
 import index from '../src/index'
 import mongoose from 'mongoose'
-import Image from '../src/core/image/infrastructure/mongoose/image'
-import prisma from '../src/connections/prisma.connection'
+import Image from '../src/core/image/infrastructure/mongoose/image.model'
+import prisma from '../src/core/person/infrastructure/prisma/prisma.connection'
 import { imageUseCase, initialPersons, personUseCase, getTheFirstImageSaved, getTheFirstUserSaved } from './helpers'
 import fs from 'node:fs/promises'
 
@@ -91,6 +91,9 @@ describe('POST a image', () => {
     const person = await getTheFirstUserSaved()
     const response = await api.post(`/api/v1/images/${person.personId}`)
       .attach('image', `${__dirname}/images/pose.jpg`)
+      .field('title', 'Test image')
+      .field('description', 'Test descripcion')
+      .set('Content-Type', 'multipart/form-data')
       .expect(201)
     
     expect(response.body.data.personId).toBe(person.personId)

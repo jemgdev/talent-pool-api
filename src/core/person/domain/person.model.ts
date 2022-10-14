@@ -1,7 +1,6 @@
-import { v4 as uuid } from 'uuid'
-import IPerson from './person.interface'
+import PersonIdGeneratorRepository from './person.id.generator.repository'
 
-export default class Person implements IPerson {
+export default class Person {
   personId: string
   name: string
   lastname: string
@@ -10,8 +9,8 @@ export default class Person implements IPerson {
   cityOfBirth: string
   age: number
 
-  constructor (name: string, lastname: string, idType: string, idNumber: number, cityOfBirth: string, age: number) {
-    this.personId = uuid()
+  constructor (personIdGeneratorRepository: PersonIdGeneratorRepository, name: string, lastname: string, idType: string, idNumber: number, cityOfBirth: string, age: number) {
+    this.personId = personIdGeneratorRepository.generatePersonId()
     this.name = name
     this.lastname = lastname
     this.idType = idType

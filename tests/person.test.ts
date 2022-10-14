@@ -1,7 +1,7 @@
 import supertest from 'supertest'
 import index from '../src/index'
 import mongoose from 'mongoose'
-import prisma from '../src/connections/prisma.connection'
+import prisma from '../src/core/person/infrastructure/prisma/prisma.connection'
 import { getAllPersons, initialPersons, getTheFirstUserSaved, personUseCase } from './helpers'
 
 const { app, server } = index

@@ -1,14 +1,14 @@
-import PersonRepository from '../../domain/person.repository'
-import prisma from '../../../../connections/prisma.connection'
-import IPerson from '../../domain/person.interface'
+import PersonPersistanceRepository from '../../domain/person.persistance.repository'
+import prisma from './prisma.connection'
+import Person from '../../domain/person.model'
 
-export default class PersonPrismaRepository implements PersonRepository {
-  async getAllPersons (): Promise<IPerson[]> {
+export default class PersonPrismaRepository implements PersonPersistanceRepository {
+  async getAllPersons (): Promise<Person[]> {
     const persons = await prisma.person.findMany({})
     return persons
   }
 
-  async getPersonById (personId: string): Promise<IPerson | null> {
+  async getPersonById (personId: string): Promise<Person | null> {
     const person = await prisma.person.findUnique({
       where: {
         personId
@@ -17,7 +17,7 @@ export default class PersonPrismaRepository implements PersonRepository {
     return person
   }
 
-  async getPersonByIdTypeAndIdNumber (idType: string, idNumber: number): Promise<IPerson | null> {
+  async getPersonByIdTypeAndIdNumber (idType: string, idNumber: number): Promise<Person | null> {
     const personFound = await prisma.person.findMany({
       where: {
         idType,
@@ -27,7 +27,7 @@ export default class PersonPrismaRepository implements PersonRepository {
     return personFound[0]
   }
 
-  async getPersonsGreaterOrEqualToAge (age: number): Promise<IPerson[]> {
+  async getPersonsGreaterOrEqualToAge (age: number): Promise<Person[]> {
     const personsFound = await prisma.person.findMany({
       where: {
         age: {
@@ -38,7 +38,7 @@ export default class PersonPrismaRepository implements PersonRepository {
     return personsFound
   }
 
-  async insertPerson (person: { personId: string, name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string }): Promise<IPerson> {
+  async insertPerson (person: { personId: string, name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string }): Promise<Person> {
     const personSaved = await prisma.person.create({
       data: {
         personId: person.personId,
@@ -53,7 +53,7 @@ export default class PersonPrismaRepository implements PersonRepository {
     return personSaved
   }
 
-  async updatePersonById (personId: string, person: { name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string }): Promise<IPerson> {
+  async updatePersonById (personId: string, person: { name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string }): Promise<Person> {
     const personUpdated = await prisma.person.update({
       data: {
         name: person.name,
@@ -70,7 +70,7 @@ export default class PersonPrismaRepository implements PersonRepository {
     return personUpdated
   }
 
-  async deletePersonById (personId: string): Promise<IPerson> {
+  async deletePersonById (personId: string): Promise<Person> {
     const personDeleted = await prisma.person.delete({
       where: {
         personId
@@ -79,7 +79,7 @@ export default class PersonPrismaRepository implements PersonRepository {
     return personDeleted
   }
 
-  async deletePersonByIdNumber (idNumber: number): Promise<IPerson> {
+  async deletePersonByIdNumber (idNumber: number): Promise<Person> {
     const personDeleted = await prisma.person.delete({
       where: {
         idNumber

@@ -4,9 +4,11 @@ import PersonPrismaRepository from '../src/core/person/infrastructure/prisma/per
 import ImageMongooseRespository from '../src/core/image/infrastructure/mongoose/image.mongoose.repository'
 import ImageAwsRepository from '../src/core/image/infrastructure/aws/image.aws.repository'
 import ImageCloudinaryRepository from '../src/core/image/infrastructure/cloudinary/image.cloudinary.respository'
+import PersonUuidRepository from '../src/core/person/infrastructure/uuid/person.uuid.repository'
+import ImageUuidRepository from '../src/core/image/infrastructure/uuid/image.uuid.repository'
 
-export const personUseCase = new PersonUseCase(new PersonPrismaRepository())
-export const imageUseCase = new ImageUseCase(new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageAwsRepository())
+export const personUseCase = new PersonUseCase(new PersonUuidRepository(), new PersonPrismaRepository())
+export const imageUseCase = new ImageUseCase(new ImageUuidRepository() ,new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageAwsRepository())
 
 export default interface IImage {
   imageId?: string

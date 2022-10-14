@@ -1,26 +1,28 @@
 import CustomError from '../../shared/custom.error'
-import IPerson from '../domain/person.interface'
+import PersonIdGeneratorRepository from '../domain/person.id.generator.repository'
 import Person from '../domain/person.model'
-import PersonRepository from '../domain/person.repository'
+import PersonPersistanceRepository from '../domain/person.persistance.repository'
 
 export default class PersonUseCase {
-  private readonly personRepository: PersonRepository
+  private readonly personIdGeneratorRepository: PersonIdGeneratorRepository
+  private readonly personPersistanceRepository: PersonPersistanceRepository
 
-  constructor (personRepository: PersonRepository) {
-    this.personRepository = personRepository
+  constructor (personIdGeneratorRepository: PersonIdGeneratorRepository, personPersistanceRepository: PersonPersistanceRepository) {
+    this.personIdGeneratorRepository = personIdGeneratorRepository
+    this.personPersistanceRepository = personPersistanceRepository
   }
 
-  async listAllPersons (age?: number): Promise<IPerson[] | null> {
+  async listAllPersons (age?: number): Promise<Person[] | null> {
     if (age) {
       const ageNumber = Number(age)
-      return await this.personRepository.getPersonsGreaterOrEqualToAge(ageNumber)
+      return await this.personPersistanceRepository.getPersonsGreaterOrEqualToAge(ageNumber)
     }
 
-    return await this.personRepository.getAllPersons()
+    return await this.personPersistanceRepository.getAllPersons()
   }
 
-  async getUniquePerson (personId: string): Promise<IPerson | null> {
-    const person = await this.personRepository.getPersonById(personId)
+  async getUniquePerson (personId: string): Promise<Person | null> {
+    const person = await this.personPersistanceRepository.getPersonById(personId)
 
     if (!person) {
       throw new CustomError ('PERSON_404', 'Person', 'The person that you want to get was not found')
@@ -29,19 +31,19 @@ export default class PersonUseCase {
     return person
   }
 
-  async getPersonByIdentification (idType: string, idNumber: number): Promise<IPerson | null> {
+  async getPersonByIdentification (idType: string, idNumber: number): Promise<Person | null> {
     if (!idType || !idNumber) {
       throw new CustomError ('PERSON_404', 'Person', 'You must to especify a idType and a idNumber')
     }
 
-    const person = await this.personRepository.getPersonByIdTypeAndIdNumber(idType, Number(idNumber))
+    const person = await this.personPersistanceRepository.getPersonByIdTypeAndIdNumber(idType, Number(idNumber))
     return person
   }
 
-  async savePerson (name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string ): Promise<IPerson | null> {
-    const person = new Person(name, lastname, idType, idNumber, cityOfBirth, age)
+  async savePerson (name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string ): Promise<Person | null> {
+    const person = new Person(this.personIdGeneratorRepository ,name, lastname, idType, idNumber, cityOfBirth, age)
     try {
-      const personSaved = await this.personRepository.insertPerson(person)
+      const personSaved = await this.personPersistanceRepository.insertPerson(person)
       return personSaved
     } catch (error: any) {
       if (error.code === 'P2002') {
@@ -54,24 +56,25 @@ export default class PersonUseCase {
     }
   }
 
-  async updatePerson (personId: string, person: { name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string }): Promise<IPerson | null> {
-    const oldPerson = await this.personRepository.getPersonById(personId)
+  async updatePerson (personId: string, person: { name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string }): Promise<Person | null> {
+    const oldPerson = await this.personPersistanceRepository.getPersonById(personId)
 
     if (!oldPerson) {
       throw new CustomError ('PERSON_404', 'Person', 'The person that you want to update was not found')
     }
 
-    const newPerson = {
+    const newPerson: Person = {
       name: typeof person.name === 'undefined' ? oldPerson.name : person.name,
       lastname: typeof person.lastname === 'undefined' ? oldPerson.lastname : person.lastname,
       idType: typeof person.idType === 'undefined' ? oldPerson.idType : person.idType,
       idNumber: typeof person.idNumber === 'undefined' ? oldPerson.idNumber : person.idNumber,
       cityOfBirth: typeof person.cityOfBirth === 'undefined' ? oldPerson.cityOfBirth : person.cityOfBirth,
-      age: typeof person.age === 'undefined' ? oldPerson.age : person.age
+      age: typeof person.age === 'undefined' ? oldPerson.age : person.age,
+      personId: oldPerson.personId
     }
 
     try {
-      const personUpdated = await this.personRepository.updatePersonById(personId, newPerson)
+      const personUpdated = await this.personPersistanceRepository.updatePersonById(personId, newPerson)
       if (!personUpdated) {
         throw new CustomError ('PERSON_403', 'Person', 'The person idNumber that you want to update already exists')
       }
@@ -81,9 +84,9 @@ export default class PersonUseCase {
     }
   }
 
-  async deletePersonById (personId: string): Promise<IPerson | null> {
+  async deletePersonById (personId: string): Promise<Person | null> {
     try {
-      const personDeleted = await this.personRepository.deletePersonById(personId)
+      const personDeleted = await this.personPersistanceRepository.deletePersonById(personId)
       return personDeleted
     } catch (error: any) {
       throw new CustomError ('PERSON_404', 'Person', 'The person that you want to delete was not found')
@@ -91,9 +94,9 @@ export default class PersonUseCase {
     
   }
 
-  async deletePersonByIdNumber (idNumber: number): Promise<IPerson | null> {
+  async deletePersonByIdNumber (idNumber: number): Promise<Person | null> {
     try {
-      const personDeleted = await this.personRepository.deletePersonByIdNumber(idNumber)
+      const personDeleted = await this.personPersistanceRepository.deletePersonByIdNumber(idNumber)
       return personDeleted
     } catch (error: any) {
       throw new CustomError ('PERSON_404', 'Person', 'The person that you want to delete was not found')
