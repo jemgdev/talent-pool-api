@@ -2,7 +2,7 @@ import supertest from 'supertest'
 import index from '../src/index'
 import mongoose from 'mongoose'
 import prisma from '../src/core/person/infrastructure/prisma/prisma.connection'
-import { getAllPersons, initialPersons, getTheFirstUserSaved, personUseCase } from './helpers'
+import { getAllPersons, initialPersons, getTheFirstUserSaved, savePerson } from './helpers'
 
 const { app, server } = index
 const api = supertest(app)
@@ -15,7 +15,7 @@ beforeEach(async () => {
 
   for (const person of initialPersons) {
     const { age, cityOfBirth, idNumber, idType, lastname, name } = person
-    await personUseCase.savePerson(name, lastname, age, idType, idNumber, cityOfBirth)
+    await savePerson.save(name, lastname, age, idType, idNumber, cityOfBirth)
   }
 })
 

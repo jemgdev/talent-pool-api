@@ -1,14 +1,17 @@
-import PersonUseCase from '../src/core/person/application/person.usecase'
-import ImageUseCase from '../src/core/image/application/image.usecase'
+import ListAllPersons from '../src/core/person/application/list.all.persons'
+import SavePerson from '../src/core/person/application/save.person'
 import PersonPrismaRepository from '../src/core/person/infrastructure/prisma/person.prisma.repository'
 import ImageMongooseRespository from '../src/core/image/infrastructure/mongoose/image.mongoose.repository'
 import ImageAwsRepository from '../src/core/image/infrastructure/aws/image.aws.repository'
-import ImageCloudinaryRepository from '../src/core/image/infrastructure/cloudinary/image.cloudinary.respository'
 import PersonUuidRepository from '../src/core/person/infrastructure/uuid/person.uuid.repository'
 import ImageUuidRepository from '../src/core/image/infrastructure/uuid/image.uuid.repository'
+import ListAllImages from '../src/core/image/application/list.all.images'
+import UploadImageByPerson from '../src/core/image/application/upload.image.by.person'
 
-export const personUseCase = new PersonUseCase(new PersonUuidRepository(), new PersonPrismaRepository())
-export const imageUseCase = new ImageUseCase(new ImageUuidRepository() ,new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageAwsRepository())
+export const listAllPersons = new ListAllPersons(new PersonPrismaRepository())
+export const savePerson = new SavePerson(new PersonUuidRepository(), new PersonPrismaRepository())
+export const listAllImages = new ListAllImages(new ImageMongooseRespository())
+export const uploadImageByPerson = new UploadImageByPerson(new ImageUuidRepository(), new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageAwsRepository())
 
 export default interface IImage {
   imageId?: string
@@ -81,13 +84,13 @@ export const initialPersons: IPerson[] = [
 ]
 
 export const getAllPersons = async (): Promise<any> => {
-  const persons = await personUseCase.listAllPersons()
+  const persons = await listAllPersons.list()
   
   return persons
 }
 
 export const getTheFirstUserSaved = async (): Promise<any> => {
-  const persons = await personUseCase.listAllPersons()
+  const persons = await listAllPersons.list()
  
   if (!persons) {
     throw new Error('There are no persons')
@@ -97,7 +100,7 @@ export const getTheFirstUserSaved = async (): Promise<any> => {
 }
 
 export const getTheFirstImageSaved = async (): Promise<any> => {
-  const images = await imageUseCase.listAllImages()
+  const images = await listAllImages.list()
 
   if (!images) {
     throw new Error('There are no images')

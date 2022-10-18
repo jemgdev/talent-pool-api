@@ -3,7 +3,7 @@ import index from '../src/index'
 import mongoose from 'mongoose'
 import Image from '../src/core/image/infrastructure/mongoose/image.model'
 import prisma from '../src/core/person/infrastructure/prisma/prisma.connection'
-import { imageUseCase, initialPersons, personUseCase, getTheFirstImageSaved, getTheFirstUserSaved } from './helpers'
+import { uploadImageByPerson, initialPersons, savePerson, getTheFirstImageSaved, getTheFirstUserSaved } from './helpers'
 import fs from 'node:fs/promises'
 
 const { app, server } = index
@@ -30,11 +30,11 @@ beforeEach(async () => {
     if (!image) {
       throw new Error('Need images')
     }
-    const personSaved = await personUseCase.savePerson(name, lastname, age, idType, idNumber, cityOfBirth)
+    const personSaved = await savePerson.save(name, lastname, age, idType, idNumber, cityOfBirth)
     if (!personSaved) {
       throw new Error('Error person was not saved')
     }
-    await imageUseCase.uploadImageByPerson(image.url, image.fileName, personSaved.personId, image.title, image.description, false)
+    await uploadImageByPerson.upload(image.url, image.fileName, personSaved.personId, image.title, image.description, false)
   }
 })
 

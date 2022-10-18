@@ -1,14 +1,14 @@
 import { Router } from 'express'
-import { getAllPersons, getPersonById, getPersonByIdentification, createPerson, updatePerson, deletePerson, deletePersonByIdNumber } from '../controllers/person.controller'
+import { getAllPersons, getPersonById, getPersonByIdTypeAndNumber, createPerson, updatePerson, deletePerson, deletePersonByIdTypeAndNumber } from '../controllers/person.controller'
 const personRouter = Router()
 
 personRouter
   .get('/', getAllPersons)
-  .get('/identification', getPersonByIdentification)
+  .get('/identification', getPersonByIdTypeAndNumber)
   .get('/:personId', getPersonById)
   .post('/', createPerson)
   .put('/:personId', updatePerson)
-  .delete('/', deletePersonByIdNumber)
+  .delete('/', deletePersonByIdTypeAndNumber)
   .delete('/:personId', deletePerson)
 
 export default personRouter

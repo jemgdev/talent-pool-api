@@ -1,16 +1,26 @@
 import { Request, Response, NextFunction } from 'express'
-import ImageUseCase from '../core/image/application/image.usecase'
+import DeleteImage from '../core/image/application/delete.image'
+import GetImagesByPerson from '../core/image/application/get.images.by.person'
+import GetUniqueImages from '../core/image/application/get.unique.image'
+import ListAllImages from '../core/image/application/list.all.images'
+import UpdateImage from '../core/image/application/update.image'
+import UploadImageByPerson from '../core/image/application/upload.image.by.person'
 import ImageAwsRepository from '../core/image/infrastructure/aws/image.aws.repository'
 import ImageCloudinaryRepository from '../core/image/infrastructure/cloudinary/image.cloudinary.respository'
 import ImageMongooseRespository from '../core/image/infrastructure/mongoose/image.mongoose.repository'
 import ImageUuidRepository from '../core/image/infrastructure/uuid/image.uuid.repository'
 import PersonPrismaRepository from '../core/person/infrastructure/prisma/person.prisma.repository'
 
-const imageUseCase = new ImageUseCase(new ImageUuidRepository() ,new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageAwsRepository())
+const listAllImages = new ListAllImages(new ImageMongooseRespository())
+const getUniqueImage = new GetUniqueImages(new ImageMongooseRespository(), new PersonPrismaRepository())
+const getImagesByPerson = new GetImagesByPerson(new ImageMongooseRespository(), new PersonPrismaRepository())
+const uploadImageByPerson = new UploadImageByPerson(new ImageUuidRepository(), new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageAwsRepository())
+const updateImage = new UpdateImage(new ImageMongooseRespository())
+const deleteImage = new DeleteImage(new ImageMongooseRespository())
 
 export const getAllImages = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   try {
-    const images = await imageUseCase.listAllImages()
+    const images = await listAllImages.list()
 
     response.status(200).json({
       status: 'OK',
@@ -26,7 +36,7 @@ export const getImage = async (request: Request, response: Response, next: NextF
   const { imageId } = request.params
 
   try {
-    const image = await imageUseCase.getUniqueImage(imageId)
+    const image = await getUniqueImage.get(imageId)
 
     response.status(200).json({
       status: 'OK',
@@ -42,7 +52,7 @@ export const getImageFromPerson = async (request: Request, response: Response, n
   const { personId } = request.params
 
   try {
-    const image = await imageUseCase.getImagesByPerson(personId)
+    const image = await getImagesByPerson.getImages(personId)
 
     response.status(200).json({
       status: 'OK',
@@ -69,7 +79,7 @@ export const uploadImage = async (request: Request, response: Response, next: Ne
   }
 
   try {
-    const imageSaved = await imageUseCase.uploadImageByPerson(file.path, file.filename, personId, title, description)
+    const imageSaved = await uploadImageByPerson.upload(file.path, file.filename, personId, title, description)
 
     response.status(201).json({
       status: 'OK',
@@ -81,12 +91,12 @@ export const uploadImage = async (request: Request, response: Response, next: Ne
   }
 }
 
-export const updateImage = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const updateImageById = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   const { imageId } = request.params
   const { title, description } = request.body
 
   try {
-    const imageUpdated = await imageUseCase.updateImage(imageId, title, description)
+    const imageUpdated = await updateImage.update(imageId, title, description)
 
     response.status(200).json({
       status: 'OK',
@@ -98,11 +108,11 @@ export const updateImage = async (request: Request, response: Response, next: Ne
   }
 }
 
-export const deleteImage = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const deleteImageById = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   const { imageId } = request.params
 
   try {
-    const imageDeleted = await imageUseCase.deleteImage(imageId)
+    const imageDeleted = await deleteImage.delete(imageId)
 
     response.status(200).json({
       status: 'OK',
