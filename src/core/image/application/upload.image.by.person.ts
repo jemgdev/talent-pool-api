@@ -18,16 +18,16 @@ export default class UploadImageByPerson {
     this.uploaderRepository = uploaderRepository
   }
 
-  async upload (path: string, fileName: string, personId: string, title: string, description: string, isUnlinkeable?: boolean): Promise<Image | null| void> {
-    const personFound = await this.personPersistanceRepository.getPersonById(personId)
+  async upload (path: string, fileName: string, idType: string, idNumber: number, title: string, description: string, isUnlinkeable?: boolean): Promise<Image | null| void> {
+    const personFound = await this.personPersistanceRepository.getUniquePerson(idType, idNumber)
 
     if (!personFound) {
       throw new CustomError ('PERSON_404', 'Person', 'Person not found')
     }
     
     const imageUrl = await this.uploaderRepository.uploadImage(path, fileName, isUnlinkeable)
-    const image = new Image(this.imageIdGeneratorRepository, personId, imageUrl, title, description)
-    const imageUploaded = await this.imagePersistanceRepository.saveImageByPersonId(personId, image.imageId, image.url, image.title, image.description)
+    const image = new Image(this.imageIdGeneratorRepository, personFound.personId, imageUrl, title, description)
+    const imageUploaded = await this.imagePersistanceRepository.saveImageByPersonId(personFound.personId, image.imageId, image.url, image.title, image.description)
     return imageUploaded    
   }
 }

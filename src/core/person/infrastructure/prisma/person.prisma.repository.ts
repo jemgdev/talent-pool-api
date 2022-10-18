@@ -14,17 +14,19 @@ export default class PersonPrismaRepository implements PersonPersistanceReposito
         personId
       }
     })
+
     return person
   }
 
-  async getPersonByIdTypeAndIdNumber (idType: string, idNumber: number): Promise<Person | null> {
-    const personFound = await prisma.person.findMany({
+  async getUniquePerson (idType: string, idNumber: number): Promise<Person | null> {
+    const person = await prisma.person.findFirst({
       where: {
         idType,
         idNumber
       }
     })
-    return personFound[0]
+
+    return person
   }
 
   async getPersonsGreaterOrEqualToAge (age: number): Promise<Person[]> {
@@ -50,41 +52,37 @@ export default class PersonPrismaRepository implements PersonPersistanceReposito
         cityOfBirth: person.cityOfBirth
       }
     })
+
     return personSaved
   }
 
-  async updatePersonById (personId: string, person: { name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string }): Promise<Person> {
-    const personUpdated = await prisma.person.update({
+  async updatePersonByIdentification (idType, idNumber, { name, lastname, age, idTypeChange, idNumberChange, cityOfBirth }: { name: string, lastname: string, age: number, idTypeChange: string, idNumberChange: number, cityOfBirth: string }): Promise<string> {
+    await prisma.person.updateMany({
       data: {
-        name: person.name,
-        lastname: person.lastname,
-        age: person.age,
-        idType: person.idType,
-        idNumber: person.idNumber,
-        cityOfBirth: person.cityOfBirth
+        name,
+        lastname,
+        age,
+        idType: idTypeChange,
+        idNumber: idNumberChange,
+        cityOfBirth
       },
       where: {
-        personId
-      }
-    })
-    return personUpdated
-  }
-
-  async deletePersonById (personId: string): Promise<Person> {
-    const personDeleted = await prisma.person.delete({
-      where: {
-        personId
-      }
-    })
-    return personDeleted
-  }
-
-  async deletePersonByIdNumber (idNumber: number): Promise<Person> {
-    const personDeleted = await prisma.person.delete({
-      where: {
+        idType,
         idNumber
       }
     })
-    return personDeleted
+
+    return 'The person was updated'
+  }
+
+  async deletePersonByIdentification (idType: string, idNumber: number): Promise<string> {
+    await prisma.person.deleteMany({
+      where: {
+        idType,
+        idNumber
+      }
+    })
+
+    return 'The user has been deleted'
   }
 }

@@ -36,7 +36,7 @@ export const getImage = async (request: Request, response: Response, next: NextF
   const { imageId } = request.params
 
   try {
-    const image = await getUniqueImage.get(imageId)
+    const image = await getUniqueImage.getImage(imageId)
 
     response.status(200).json({
       status: 'OK',
@@ -48,11 +48,11 @@ export const getImage = async (request: Request, response: Response, next: NextF
   }
 }
 
-export const getImageFromPerson = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
-  const { personId } = request.params
-
+export const getImagesFromPerson = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+  const { idType, idNumber } = request.params
+  
   try {
-    const image = await getImagesByPerson.getImages(personId)
+    const image = await getImagesByPerson.getImages(idType, Number(idNumber))
 
     response.status(200).json({
       status: 'OK',
@@ -65,7 +65,7 @@ export const getImageFromPerson = async (request: Request, response: Response, n
 }
 
 export const uploadImage = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
-  const { personId } = request.params
+  const { idType, idNumber } = request.params
   const { title, description } = request.body
   const file = request.file
 
@@ -79,7 +79,7 @@ export const uploadImage = async (request: Request, response: Response, next: Ne
   }
 
   try {
-    const imageSaved = await uploadImageByPerson.upload(file.path, file.filename, personId, title, description)
+    const imageSaved = await uploadImageByPerson.upload(file.path, file.filename, idType, Number(idNumber), title, description)
 
     response.status(201).json({
       status: 'OK',

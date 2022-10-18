@@ -1,8 +1,7 @@
 import CustomError from '../../shared/custom.error'
-import Person from '../domain/person.model'
 import PersonPersistanceRepository from '../domain/person.persistance.repository'
 
-export default class DeletePersonByIdNumber {
+export default class DeletePerson {
   
   private readonly personPersistanceRepository: PersonPersistanceRepository
 
@@ -10,10 +9,11 @@ export default class DeletePersonByIdNumber {
     this.personPersistanceRepository = personPersistanceRepository
   }
 
-  async deletePerson (idNumber: number): Promise<Person | null> {
+  async delete (idType: string, idNumber: number): Promise<string | null> {
     try {
-      const personDeleted = await this.personPersistanceRepository.deletePersonByIdNumber(idNumber)
-      return personDeleted
+      const message = await this.personPersistanceRepository.deletePersonByIdentification(idType, idNumber)
+      
+      return message
     } catch (error: any) {
       throw new CustomError ('PERSON_404', 'Person', 'The person that you want to delete was not found')
     }

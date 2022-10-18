@@ -1,21 +1,18 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Person {
-  personId String @db.VarChar(255) @id 
-  name String @db.VarChar(255)
-  lastname String @db.VarChar(255)
-  idType String @db.VarChar(255)
-  idNumber Int @db.Int @unique
+  personId    String @id @db.VarChar(255)
+  name        String @db.VarChar(255)
+  lastname    String @db.VarChar(255)
+  idType      String @db.VarChar(255)
+  idNumber    Int @db.Int
   cityOfBirth String @db.VarChar(255)
-  age Int @db.Int
+  age         Int @db.Int
 }

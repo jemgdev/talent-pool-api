@@ -13,8 +13,14 @@ export default class SavePerson {
   }
 
   async save (name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string ): Promise<Person | null> {
-    const person = new Person(this.personIdGeneratorRepository ,name, lastname, idType, idNumber, cityOfBirth, age)
+    const userFound = await this.personPersistanceRepository.getUniquePerson(idType, idNumber)
+
+    if (userFound) {
+      throw new CustomError ('PERSON_403', 'Person', 'The person that you want to create already exists')
+    }
+
     try {
+      const person = new Person(this.personIdGeneratorRepository ,name, lastname, idType, idNumber, cityOfBirth, age)
       const personSaved = await this.personPersistanceRepository.insertPerson(person)
       return personSaved
     } catch (error: any) {
