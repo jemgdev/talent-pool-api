@@ -14,10 +14,23 @@ const updatePersonByIdentification = new UpdatePersonByIdentification(new Person
 const deletePersonByIdNumber = new DeletePerson(new PersonPrismaRepository())
 
 export const getAllPersons = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
-  const { age } = request.body
+  try {
+    const persons = await listAllPersons.list()
+    response.status(200).json({
+      status: 'OK',
+      message: 'All persons were found',
+      data: persons
+    }).end()
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getPersonsThatAge = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+  const { ageNumber } = request.params
 
   try {
-    const persons = await listAllPersons.list(Number(age))
+    const persons = await listAllPersons.listGreaterOrEqualsToAge(Number(ageNumber))
     response.status(200).json({
       status: 'OK',
       message: 'All persons were found',

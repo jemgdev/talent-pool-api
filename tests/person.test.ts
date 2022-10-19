@@ -29,15 +29,7 @@ describe('GET all persons', () => {
 
 describe('GET persons that are greater or equal to a specific age', () => {
   test('Response must to be return two persons', async () => {
-    const response = await api.get('/api/v1/persons').send({ age: 16})
-      .expect('Content-Type', /application\/json/)
-      .expect(200)
-
-    expect(response.body.data).toHaveLength(2)
-  })
-
-  test('Sending a string age from body', async () => {
-    const response = await api.get('/api/v1/persons').send({ age: '16'})
+    const response = await api.get(`/api/v1/persons/age/${16}`)
       .expect('Content-Type', /application\/json/)
       .expect(200)
 
@@ -130,11 +122,9 @@ describe('PUT a person by personId', () => {
   
   test('Do not allow update a person without send no data', async () => {
     const person = await getTheFirstUserSaved()
-    const response = await api.put(`/api/v1/persons/${person.idType}/${person.idNumber}`)
+    await api.put(`/api/v1/persons/${person.idType}/${person.idNumber}`)
       .expect('Content-Type', /application\/json/)
-      .expect(500)
-    
-    expect(response.body.message).toBe('Internal server error')
+      .expect(200)
   })
 
   test('Send an error message where wants to update a person that was no found', async () => {

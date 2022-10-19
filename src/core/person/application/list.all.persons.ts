@@ -8,12 +8,12 @@ export default class ListAllPersons {
     this.personPersistanceRepository = personPersistanceRepository
   }
 
-  async list (age?: number): Promise<Person[] | null> {
-    if (age) {
-      const ageNumber = Number(age)
-      return await this.personPersistanceRepository.getPersonsGreaterOrEqualToAge(ageNumber)
-    }
-
+  async list (): Promise<Person[] | null> {
     return await this.personPersistanceRepository.getAllPersons()
+  }
+
+  async listGreaterOrEqualsToAge (age: number): Promise<Person[] | null> {
+    const ageNumber = Number(age)
+    return await this.personPersistanceRepository.getPersonsGreaterOrEqualToAge(ageNumber)
   }
 }

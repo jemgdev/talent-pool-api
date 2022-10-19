@@ -58,14 +58,12 @@ export default class PersonPrismaRepository implements PersonPersistanceReposito
     return personSaved
   }
 
-  async updatePersonByIdentification (idType, idNumber, { name, lastname, age, idTypeChange, idNumberChange, cityOfBirth }: { name: string, lastname: string, age: number, idTypeChange: string, idNumberChange: number, cityOfBirth: string }): Promise<string> {
+  async updatePersonByIdentification (idType, idNumber, { name, lastname, age, cityOfBirth }: { name: string, lastname: string, age: number, cityOfBirth: string }): Promise<string> {
     await prisma.person.updateMany({
       data: {
         name,
         lastname,
         age,
-        idType: idTypeChange,
-        idNumber: idNumberChange,
         cityOfBirth
       },
       where: {
