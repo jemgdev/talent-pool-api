@@ -45,18 +45,16 @@ describe('GET persons that are greater or equal to a specific age', () => {
   })
 
   test('Sending an age number from params', async () => {
-    const response = await api.get('/api/v1/persons/12')
+    await api.get('/api/v1/persons/12')
       .expect('Content-Type', /application\/json/)
       .expect(404)
-    
-    expect(response.body.message).toBe('The person that you want to get was not found')
   })
 })
 
-describe('GET a person by ID', () => {
+describe('GET a person by idType and idNumber', () => {
   test('Send from params the person from existing person', async () => {
     const personSaved = await getTheFirstUserSaved()
-    const personFound = await api.get(`/api/v1/persons/${personSaved.personId}`)
+    const personFound = await api.get(`/api/v1/persons/${personSaved.idType}/${personSaved.idNumber}`)
       .expect('Content-Type', /application\/json/)
       .expect(200)
       
@@ -64,41 +62,10 @@ describe('GET a person by ID', () => {
   })
 
   test('Send from params a id number that non exists', async () => {
-    const response = await api.get('/api/v1/persons/q89dhq9wdq')
+    const response = await api.get('/api/v1/persons/q89dhq9wdq/ajd80j28i')
       .expect('Content-Type', /application\/json/)
       .expect(404)
     
-    expect(response.body.message).toBe('The person that you want to get was not found')
-  })
-})
-
-describe('GET a person by idType and idNumber', () => {
-  test('Get a person successfully', async () => {
-    const response = await api.get('/api/v1/persons/identification').send({
-      idType: 'DNI',
-      idNumber: 83929331
-    }).expect('Content-Type', /application\/json/)
-      .expect(200)
-
-    expect(response.body.data.idType).toBe('DNI')
-    expect(response.body.data.idNumber).toBe(83929331)
-  })
-
-  test('Get an error message where sends only an idType', async () => {
-    const response = await api.get('/api/v1/persons/identification').send({
-      idType: 'DNI'
-    }).expect('Content-Type', /application\/json/)
-      .expect(404)
-
-    expect(response.body.message).toBe('You must to especify a idType and a idNumber')
-  })
-
-  test('Get an error message where sends only an idNumber', async () => {
-    const response = await api.get('/api/v1/persons/identification').send({
-      idNumber: 83929331
-    }).expect('Content-Type', /application\/json/)
-      .expect(404)
-
     expect(response.body.message).toBe('You must to especify a idType and a idNumber')
   })
 })
@@ -129,7 +96,7 @@ describe('POST a new person', () => {
     }).expect('Content-Type', /application\/json/)
       .expect(403)
 
-    expect(response.body.message).toBe('The person idType and idNumber that you want to create already exists')
+    expect(response.body.message).toBe('The person that you want to create already exists')
   })
 
   test('Send a person without required attributes', async () => {
@@ -148,7 +115,7 @@ describe('POST a new person', () => {
 describe('PUT a person by personId', () => {
   test('Update a person successfully', async () => {
     const personSaved = await getTheFirstUserSaved()
-    const response = await api.put(`/api/v1/persons/${personSaved.personId}`).send({
+    const response = await api.put(`/api/v1/persons/${personSaved.idType}/${personSaved.idNumber}`).send({
       name: 'Test2222',
       lastname: 'JavaScript',
       idType: 'DNI',
@@ -161,17 +128,17 @@ describe('PUT a person by personId', () => {
     expect(response.body.data.name).not.toBe(personSaved.name)
   })
   
-  test('Allow pdate a person without send any data', async () => {
+  test('Do not allow update a person without send no data', async () => {
     const person = await getTheFirstUserSaved()
-    const response = await api.put(`/api/v1/persons/${person.personId}`)
+    const response = await api.put(`/api/v1/persons/${person.idType}/${person.idNumber}`)
       .expect('Content-Type', /application\/json/)
-      .expect(200)
-
-    expect(response.body.data).toStrictEqual(person)
+      .expect(500)
+    
+    expect(response.body.message).toBe('Internal server error')
   })
 
   test('Send an error message where wants to update a person that was no found', async () => {
-    const response = await api.put('/api/v1/persons/asdioausdh98asd').send({
+    const response = await api.put('/api/v1/persons/asdioau/231341').send({
       name: 'Test',
       lastname: 'JavaScript',
       idType: 'DNI',
@@ -184,59 +151,29 @@ describe('PUT a person by personId', () => {
     expect(response.body.message).toBe('The person that you want to update was not found')
   })
 
-  test('Send an error message where wants to update a persons idNumber that already exists', async () => {
-    const person = await getTheFirstUserSaved()
-    const response = await api.put(`/api/v1/persons/${person.personId}`).send({
+  test('Send an error message where wants to update a person that idNumber is not a number', async () => {
+    const response = await api.put('/api/v1/persons/asdioau/eqrefweef').send({
       name: 'Test',
       lastname: 'JavaScript',
       idType: 'DNI',
-      idNumber: 83929333,
+      idNumber: 'aasdh92h98',
       cityOfBirth: 'Peru',
       age: 14
     }).expect('Content-Type', /application\/json/)
-      .expect(403)
-    
-    expect(response.body.message).toBe('The person idNumber that you want to update already exists')
+      .expect(500)
+
+    expect(response.body.message).toBe('Internal server error')
   })
 })
 
-describe('DELETE a person by personId', () => {
+describe('DELETE a person', () => {
   test('Delete person successfully', async () => {
     const person = await getTheFirstUserSaved()
-    const response = await api.delete(`/api/v1/persons/${person.personId}`)
+    const response = await api.delete(`/api/v1/persons/${person.idType}/${person.idNumber}`)
       .expect('Content-Type', /application\/json/)
       .expect(200)
 
-    expect(response.body.data.personId).toBe(person.personId)
-  })
-
-  test('Delete person where not found', async () => {
-    const response = await api.delete('/api/v1/persons/38ehj83hr89hqwed')
-      .expect('Content-Type', /application\/json/)
-      .expect(404)
-
-    expect(response.body.message).toBe('The person that you want to delete was not found')
-  })
-})
-
-describe('DELETE a person by idNumber', () => {
-  test('Delete a person successfully', async () => {
-    const person = await getTheFirstUserSaved()
-    const response = await api.delete('/api/v1/persons/').send({
-      idNumber: person.idNumber
-    }).expect('Content-Type', /application\/json/)
-      .expect(200)
-
-    expect(response.body.data.personId).toBe(person.personId)
-  })
-
-  test('Delete a person where idNumber does not exists', async () => {
-    const response = await api.delete('/api/v1/persons/').send({
-      idNumber: 283877984
-    }).expect('Content-Type', /application\/json/)
-      .expect(404)
-
-    expect(response.body.message).toBe('The person that you want to delete was not found')
+    expect(response.body.message).toBe('The user has been deleted')
   })
 })
 

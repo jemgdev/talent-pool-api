@@ -13,24 +13,19 @@ export default class SavePerson {
   }
 
   async save (name: string, lastname: string, age: number, idType: string, idNumber: number, cityOfBirth: string ): Promise<Person | null> {
-    const userFound = await this.personPersistanceRepository.getUniquePerson(idType, idNumber)
+    const personFound = await this.personPersistanceRepository.getUniquePerson(idType, idNumber)
 
-    if (userFound) {
+    if (personFound?.idType === idType && personFound.idNumber) {
       throw new CustomError ('PERSON_403', 'Person', 'The person that you want to create already exists')
     }
 
+    const person = new Person(this.personIdGeneratorRepository ,name, lastname, idType, idNumber, cityOfBirth, age)
+    
     try {
-      const person = new Person(this.personIdGeneratorRepository ,name, lastname, idType, idNumber, cityOfBirth, age)
       const personSaved = await this.personPersistanceRepository.insertPerson(person)
       return personSaved
-    } catch (error: any) {
-      if (error.code === 'P2002') {
-        throw new CustomError ('PERSON_403', 'Person', 'The person idType and idNumber that you want to create already exists')
-      }
-      else if (error.name === 'Error') {
-        throw new CustomError ('PERSON_400', 'Person error', 'You must to specify all required attributes')
-      }
-      throw new CustomError ('PERSON_404', 'Person error', 'There was an unexpected error with the person service')
+    } catch (error) {
+      throw new CustomError ('PERSON_400', 'Person error', 'You must to specify all required attributes')
     }
   }
 }

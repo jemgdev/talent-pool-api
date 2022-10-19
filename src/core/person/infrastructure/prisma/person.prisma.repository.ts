@@ -21,8 +21,10 @@ export default class PersonPrismaRepository implements PersonPersistanceReposito
   async getUniquePerson (idType: string, idNumber: number): Promise<Person | null> {
     const person = await prisma.person.findFirst({
       where: {
-        idType,
-        idNumber
+        AND: {
+          idNumber,
+          idType
+        }
       }
     })
 
@@ -78,8 +80,10 @@ export default class PersonPrismaRepository implements PersonPersistanceReposito
   async deletePersonByIdentification (idType: string, idNumber: number): Promise<string> {
     await prisma.person.deleteMany({
       where: {
-        idType,
-        idNumber
+        AND: {
+          idNumber,
+          idType
+        }
       }
     })
 

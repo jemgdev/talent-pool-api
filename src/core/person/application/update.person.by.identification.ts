@@ -24,19 +24,14 @@ export default class UpdatePersonByIdentification {
       age: typeof age === 'undefined' ? oldPerson.age : age,
       personId: oldPerson.personId
     }
+    const personFound = await this.personPersistanceRepository.getUniquePerson(idTypeChange, idNumberChange)
 
-    try {
-      const userFound = await this.personPersistanceRepository.getUniquePerson(newPerson.idTypeChange, newPerson.idNumberChange)
-
-      if (userFound) {
-        throw new CustomError ('PERSON_403', 'Person', 'The person that you want to update already exists')
-      }
-
-      const message = await this.personPersistanceRepository.updatePersonByIdentification(idType, idNumber, newPerson)
-
-      return message
-    } catch (error: any) {
+    if (personFound?.idType === idType && personFound.idNumber) {
       throw new CustomError ('PERSON_403', 'Person', 'The person that you want to update already exists')
     }
+
+    const message = await this.personPersistanceRepository.updatePersonByIdentification(idType, idNumber, newPerson)
+
+    return message
   }
 }

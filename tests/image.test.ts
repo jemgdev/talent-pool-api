@@ -34,7 +34,7 @@ beforeEach(async () => {
     if (!personSaved) {
       throw new Error('Error person was not saved')
     }
-    await uploadImageByPerson.upload(image.url, image.fileName, personSaved.personId, image.title, image.description, false)
+    await uploadImageByPerson.upload(image.url, image.fileName, personSaved.idType, personSaved.idNumber, image.title, image.description, false)
   }
 })
 
@@ -68,9 +68,9 @@ describe('GET a image by id', () => {
 })
 
 describe('GET images from personId', () => {
-  test('Get images by personId successfully', async () => {
+  test('Get images by person successfully', async () => {
     const person = await getTheFirstUserSaved()
-    const response = await api.get(`/api/v1/images/persons/${person.personId}`)
+    const response = await api.get(`/api/v1/images/persons/${person.idType}/${person.idNumber}`)
       .expect('Content-Type', /application\/json/)
       .expect(200)
 
@@ -78,7 +78,7 @@ describe('GET images from personId', () => {
   })
 
   test('Must fail when sends a personId that non exists', async () => {
-    const response = await api.get('/api/v1/images/persons/iauqsdbyu8asdqw3')
+    const response = await api.get('/api/v1/images/persons/iauqsdby/2838389')
       .expect('Content-Type', /application\/json/)
       .expect(404)
     
@@ -89,7 +89,7 @@ describe('GET images from personId', () => {
 describe('POST a image', () => {
   test('Upload a image jpg, jpeg, and png successfully', async () => {
     const person = await getTheFirstUserSaved()
-    const response = await api.post(`/api/v1/images/${person.personId}`)
+    const response = await api.post(`/api/v1/images/${person.idType}/${person.idNumber}`)
       .attach('image', `${__dirname}/images/pose.jpg`)
       .field('title', 'Test image')
       .field('description', 'Test descripcion')
@@ -99,8 +99,8 @@ describe('POST a image', () => {
     expect(response.body.data.personId).toBe(person.personId)
   })
 
-  test('Upload a image where the personId no exists', async () => {
-    const response = await api.post('/api/v1/images/qsdhq9983892hh8333')
+  test('Upload a image where the person no exists', async () => {
+    const response = await api.post('/api/v1/images/3uh89r3h8983/373738')
       .attach('image', `${__dirname}/images/pose.jpg`)
       .expect(404)
     
@@ -109,7 +109,7 @@ describe('POST a image', () => {
 
   test('Upload a pdf should fail', async () => {
     const person = await getTheFirstUserSaved()
-    const response = await api.post(`/api/v1/images/${person.personId}`)
+    const response = await api.post(`/api/v1/images/${person.idType}/${person.idNumber}`)
       .attach('image', `${__dirname}/images/test.pdf`)
       .expect(400)
     

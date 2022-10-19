@@ -7,11 +7,12 @@ import PersonUuidRepository from '../src/core/person/infrastructure/uuid/person.
 import ImageUuidRepository from '../src/core/image/infrastructure/uuid/image.uuid.repository'
 import ListAllImages from '../src/core/image/application/list.all.images'
 import UploadImageByPerson from '../src/core/image/application/upload.image.by.person'
+import ImageCloudinaryRepository from '../src/core/image/infrastructure/cloudinary/image.cloudinary.respository'
 
 export const listAllPersons = new ListAllPersons(new PersonPrismaRepository())
 export const savePerson = new SavePerson(new PersonUuidRepository(), new PersonPrismaRepository())
 export const listAllImages = new ListAllImages(new ImageMongooseRespository())
-export const uploadImageByPerson = new UploadImageByPerson(new ImageUuidRepository(), new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageAwsRepository())
+export const uploadImageByPerson = new UploadImageByPerson(new ImageUuidRepository(), new ImageMongooseRespository(), new PersonPrismaRepository(), new ImageCloudinaryRepository())
 
 export default interface IImage {
   imageId?: string
