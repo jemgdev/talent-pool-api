@@ -5,7 +5,9 @@ import Image from '../../domain/image.model'
 
 export default class ImageMongooseRespository implements ImagePersistanceRepository {
   async getAllImages (): Promise<Image[] | null> {
-    const images = await ImageModel.find({})
+    const images = await ImageModel.find({}, {
+      personId: 0
+    })
 
     return images
   }
@@ -20,11 +22,13 @@ export default class ImageMongooseRespository implements ImagePersistanceReposit
   async getImagesByPersonId (personId): Promise<Image[] | null> {
     const image = await ImageModel.find({
       personId
+    }, {
+      personId: 0
     })
     return image
   }
 
-  async saveImageByPersonId (personId: string, imageId: string, url: string, title: string, description: string): Promise<Image | null> {
+  async saveImageByPersonId ({ personId , imageId , url , title , description }: { personId: string, imageId: string, url: string, title: string, description: string }): Promise<Image | null> {
     const image = new ImageModel({
       imageId,
       personId,
@@ -34,22 +38,38 @@ export default class ImageMongooseRespository implements ImagePersistanceReposit
     })
 
     const imageSaved = await image.save()
-    return imageSaved
+    return {
+      imageId: imageSaved.imageId,
+      url: imageSaved.url,
+      title: imageSaved.title,
+      description: imageSaved.description
+    }
   }
 
-  async updateImageById (imageId: string, title: string, description: string): Promise<Image | null> {
+  async updateImageById ({ imageId , title , description  }: { imageId: string, title: string, description: string }): Promise<Image | null> {
     const imageFound = await ImageModel.findOneAndUpdate({ imageId }, {
       title,
       description
     }, {
-      new: true
+      new: true,
+      projection: {
+        personId: 0
+      }
     })
 
     return imageFound
   }
 
   async deleteImageById (imageId: string) {
-    const imageDeleted = await ImageModel.findOneAndDelete({ imageId })
+    const imageDeleted = await ImageModel.findOneAndDelete({ imageId }, {
+      projection: {
+        personId: 0
+      }
+    })
     return imageDeleted
+  }
+
+  async deleteImagesByPersonId (personId: string) {
+    await ImageModel.deleteMany({ personId })
   }
 }

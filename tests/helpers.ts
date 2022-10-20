@@ -18,7 +18,6 @@ export default interface IImage {
   imageId?: string
   personId?: string
   fileName: string
-  url: string
   sourceUrl: string
   title: string
   description: string
@@ -46,7 +45,6 @@ export const initialPersons: IPerson[] = [
     image: {
       title: 'Foto de recuerdo',
       description: 'Me gusta esta foto',
-      url: `${__dirname}/temp/hola.png`,
       sourceUrl: `${__dirname}/images/hola.png`,
       fileName: 'hola.png'
     }
@@ -62,7 +60,6 @@ export const initialPersons: IPerson[] = [
     image: {
       title: 'Foto de recuerdo 1',
       description: 'Me gusta esta foto',
-      url: `${__dirname}/temp/carnet.png`,
       sourceUrl: `${__dirname}/images/carnet.png`,
       fileName: 'carnet.png'
     }
@@ -77,7 +74,6 @@ export const initialPersons: IPerson[] = [
     image: {
       title: 'Foto de recuerdo 2',
       description: 'Me gusta esta foto',
-      url: `${__dirname}/temp/foto_linkedin.jpg`,
       sourceUrl: `${__dirname}/images/foto_linkedin.jpg`,
       fileName: 'foto_linkedin.jpg'
     }

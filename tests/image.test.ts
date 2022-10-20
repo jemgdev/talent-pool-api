@@ -4,22 +4,9 @@ import mongoose from 'mongoose'
 import Image from '../src/core/image/infrastructure/mongoose/image.model'
 import prisma from '../src/core/person/infrastructure/prisma/prisma.connection'
 import { uploadImageByPerson, initialPersons, savePerson, getTheFirstImageSaved, getTheFirstUserSaved } from './helpers'
-import fs from 'node:fs/promises'
 
 const { app, server } = index
 const api = supertest(app)
-
-beforeAll(async () => {
-  for (const person of initialPersons) {
-    const { image } = person
-    if (!image) {
-      throw new Error('Need images')
-    }
-    const { sourceUrl, url } = image
-
-    await fs.copyFile(sourceUrl, url)
-  }
-})
 
 beforeEach(async () => {
   await Image.deleteMany({})
@@ -34,7 +21,7 @@ beforeEach(async () => {
     if (!personSaved) {
       throw new Error('Error person was not saved')
     }
-    await uploadImageByPerson.upload(image.url, image.fileName, personSaved.idType, personSaved.idNumber, image.title, image.description, false)
+    await uploadImageByPerson.upload(image.sourceUrl, image.fileName, personSaved.idType, personSaved.idNumber, image.title, image.description, false)
   }
 })
 
@@ -166,13 +153,4 @@ describe('DELETE image by imageId', () => {
 afterAll(async () => {
   await mongoose.connection.close()
   await server.close()
-  for (const person of initialPersons) {
-    const { image } = person
-    if (!image) {
-      throw new Error('Need images')
-    }
-    const { url } = image
-
-    await fs.unlink(url)
-  }
 })

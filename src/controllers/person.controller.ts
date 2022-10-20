@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
+import ImageMongooseRespository from '../core/image/infrastructure/mongoose/image.mongoose.repository'
 import DeletePerson from '../core/person/application/delete.person'
 import GetPersonByIdentification from '../core/person/application/get.person.by.identification'
 import ListAllPersons from '../core/person/application/list.all.persons'
@@ -11,7 +12,7 @@ const listAllPersons = new ListAllPersons(new PersonPrismaRepository())
 const getPersonByIdentification = new GetPersonByIdentification(new PersonPrismaRepository())
 const savePerson = new SavePerson(new PersonUuidRepository(), new PersonPrismaRepository())
 const updatePersonByIdentification = new UpdatePersonByIdentification(new PersonPrismaRepository())
-const deletePersonByIdNumber = new DeletePerson(new PersonPrismaRepository())
+const deletePersonByIdNumber = new DeletePerson(new PersonPrismaRepository(), new ImageMongooseRespository())
 
 export const getAllPersons = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   try {

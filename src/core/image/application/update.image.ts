@@ -21,7 +21,7 @@ export default class UpdateImage {
       description: typeof description === 'undefined' ? oldImage.description : description
     }
 
-    const imageUpdated = await this.imagePersistanceRepository.updateImageById(imageId, newImage.title, newImage.description)
+    const imageUpdated = await this.imagePersistanceRepository.updateImageById({ imageId, title: newImage.title, description: newImage.description })
     return imageUpdated
   }
 }

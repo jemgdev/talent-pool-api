@@ -22,6 +22,10 @@ export default class GetUniqueImages {
 
     const { personId, url, title, description } = image
 
+    if (!personId) {
+      throw new CustomError ('PERSON_404', 'Person', 'Person not found')
+    }
+
     const person = await this.personPersistanceRepository.getPersonById(personId)
 
     if (!person) {

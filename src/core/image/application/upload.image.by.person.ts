@@ -27,7 +27,7 @@ export default class UploadImageByPerson {
     
     const imageUrl = await this.uploaderRepository.uploadImage(path, fileName, isUnlinkeable)
     const image = new Image(this.imageIdGeneratorRepository, personFound.personId, imageUrl, title, description)
-    const imageUploaded = await this.imagePersistanceRepository.saveImageByPersonId(personFound.personId, image.imageId, image.url, image.title, image.description)
+    const imageUploaded = await this.imagePersistanceRepository.saveImageByPersonId({ personId: personFound.personId, imageId: image.imageId, url: image.url, title: image.title, description: image.description })
     return imageUploaded    
   }
 }

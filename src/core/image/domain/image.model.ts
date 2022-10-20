@@ -2,7 +2,7 @@ import ImageIdGeneratorRepository from './image.id.generator.repository'
 
 export default class Image {
   imageId: string
-  personId: string
+  personId?: string
   url: string
   title: string
   description: string
@@ -13,15 +13,5 @@ export default class Image {
     this.url = url
     this.title = title
     this.description = description
-  }
-
-  getImage () {
-    return {
-      imageId: this.imageId,
-      personId: this.personId,
-      url: this.url,
-      title: this.title,
-      description: this.description
-    }
   }
 }
